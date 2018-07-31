@@ -14,8 +14,14 @@ export class Routes {
     private spotifyApi: SpotifyApi;
     private authRepository: AuthRepository;
 
+    //TODO: sacar todos esos news...
     constructor() {
-        this.spotifyApi = new SpotifyApi();
+        this.spotifyApi = new SpotifyApi({
+            clientId : "",
+            clientSecret: "",
+            authenticationApiUrl: "",
+            spotifyApiUrl: ""
+        });
         this.authRepository = new SpotifyAuthRepository(this.spotifyApi)
         this.useCase = new GetSpotifyTokenUseCase(this.authRepository);
         this.loginController = new TestLoginAccessController(this.useCase);

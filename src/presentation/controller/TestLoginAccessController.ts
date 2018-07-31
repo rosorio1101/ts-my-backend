@@ -10,9 +10,7 @@ export default class TestLoginAccessController {
     }
 
     public getAccessToken = (request: Request, response: Response) => {
-        try {
-            console.log("getAccessToken");
-            console.log(this.getSpotifyTokenUseCase);
+        try {            
             this.getSpotifyTokenUseCase.execute({
                 needRefresh: false
             }).then((accessToken: string) => {

@@ -13,17 +13,15 @@ export class SpotifyAuthRepository implements AuthRepository {
     public async getAccessToken(needRefresh: boolean): Promise<string> {
         return new Promise<string>( async (resolve, reject) => {
             if (this.accessToken == null || needRefresh) {
-                var request, error = await this.spotifyApi.getAccessTokenRequest();
-                if (error != null) {
+                await this.spotifyApi.getAccessTokenRequest().then((response) => {
+                    if (response.status >= 200 && response.status < 400) {
+                        this.accessToken = response.data["access_token"];
+                    }
+
+                    resolve(this.accessToken);                
+                }).catch((error) => {
                     reject(error);
-                    return;
-                }
-                if (request.status >= 200 && request.status < 400) {
-                    this.accessToken = request.data["access_token"];
-                } else {
-                    reject();
-                    return;
-                }
+                })        
             }
             
             resolve(this.accessToken);
