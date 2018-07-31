@@ -1,4 +1,4 @@
-import app from "./presentation/infrastructure/app"
+import app from "./presentation/infrastructure/app";
 
 const PORT = 3000;
 

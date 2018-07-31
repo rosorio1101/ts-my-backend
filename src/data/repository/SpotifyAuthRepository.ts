@@ -1,6 +1,6 @@
-import { AuthRepository } from "../../domain/repository/AuthRepository";
 import { SpotifyApi } from "../api/SpotifyApi";
-import { AxiosResponse } from "../../../node_modules/axios";
+import { AxiosResponse } from "axios";
+import { AuthRepository } from "../../domain/repository/AuthRepository";
 
 export class SpotifyAuthRepository implements AuthRepository {
     private spotifyApi: SpotifyApi;
@@ -20,7 +20,7 @@ export class SpotifyAuthRepository implements AuthRepository {
                 this.accessToken = response.data["access_token"];                
             }    
         }
-        
+
         return this.accessToken;
     }
 }
