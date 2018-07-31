@@ -14,6 +14,6 @@ export default class GetSpotifyTokenUseCase implements UseCase<Promise<string>, 
     }
 
     public async execute(params: Params) : Promise<string> {
-        return await this.authRepository.getAccessToken(params.needRefresh);  
+        return this.authRepository.getAccessToken(params.needRefresh);  
     }
 }
