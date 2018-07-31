@@ -7,6 +7,6 @@ export default class AlbumsMapper extends Mapper<Object, Album> {
         return new Album(data["name"], 
                         data["release_date"],
                         data["external_urls"]["spotify"], 
-                        data["images"][0]);
+                        data["images"][0]["url"]);
     }
 }

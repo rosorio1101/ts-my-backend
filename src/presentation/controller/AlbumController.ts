@@ -1,5 +1,6 @@
 import {Request, Response} from 'express'
 import SearchAlbumByNameUseCase from '../../domain/usecase/SearchAlbumByNameUseCase';
+import Album from '../../domain/model/Album';
 
 
 export default class AlbumController {
@@ -10,6 +11,14 @@ export default class AlbumController {
     }
 
     public searchAlbumsByName = (request: Request, response: Response): void => {
-        response.status(200).send("Find!");
+    
+        let albumName: string = request.query["q"];
+
+        this.searchAlbumByNameUseCase.execute(albumName).then((albums: Array<Album>)=> {
+            response.status(200).json(albums);
+        }).catch((error)=> {
+            response.status(500).send(error);
+        });
+
     }
 }
