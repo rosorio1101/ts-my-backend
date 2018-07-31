@@ -2,7 +2,7 @@
 import {Request, Response} from "express";
 
 export class Routes {
-    //TODO: sacar todos esos news...
+    
     constructor() {
     }
     

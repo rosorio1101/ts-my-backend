@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
-import { stringify } from 'querystring'
 import Secrets from '../../domain/model/Secrets';
+import { stringify } from 'querystring'
 
 export class SpotifyApi {
 
@@ -11,7 +11,8 @@ export class SpotifyApi {
     }
 
     public getAccessTokenRequest = () : Promise<AxiosResponse> => {
-        const encodedSecrets = Buffer.from(this.secrets.clientId+":"+this.secrets.clientSecret).toString('base64');
+        const encodedSecrets = Buffer.from(`${this.secrets.clientId}:${this.secrets.clientSecret}`)
+                                    .toString('base64');
 
         const authorization = `Basic ${encodedSecrets}`;       
 
@@ -36,7 +37,7 @@ export class SpotifyApi {
     }
 
     protected searchData = (query: Map<string, string>, authorization: string) : Promise<AxiosResponse> => {
-        var url = this.secrets.spotifyApiUrl + "/search";
+        var url = `${this.secrets.spotifyApiUrl}/search`;
 
         if (query) {
             url += `?${stringify(query)}`;

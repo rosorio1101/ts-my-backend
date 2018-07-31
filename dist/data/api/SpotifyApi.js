@@ -5,7 +5,8 @@ const querystring_1 = require("querystring");
 class SpotifyApi {
     constructor(secrets) {
         this.getAccessTokenRequest = () => {
-            const encodedSecrets = Buffer.from(this.secrets.clientId + ":" + this.secrets.clientSecret).toString('base64');
+            const encodedSecrets = Buffer.from(`${this.secrets.clientId}:${this.secrets.clientSecret}`)
+                .toString('base64');
             const authorization = `Basic ${encodedSecrets}`;
             return axios_1.default.post(this.secrets.authenticationApiUrl, querystring_1.stringify({ "grant_type": "client_credentials" }), {
                 headers: {
@@ -21,7 +22,7 @@ class SpotifyApi {
             return this.searchData(map, authorization);
         };
         this.searchData = (query, authorization) => {
-            var url = this.secrets.spotifyApiUrl + "/search";
+            var url = `${this.secrets.spotifyApiUrl}/search`;
             if (query) {
                 url += `?${querystring_1.stringify(query)}`;
             }

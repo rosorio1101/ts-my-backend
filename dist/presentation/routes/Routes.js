@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Routes {
-    //TODO: sacar todos esos news...
     constructor() {
     }
     routes(app) {
