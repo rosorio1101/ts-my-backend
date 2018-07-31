@@ -22,31 +22,73 @@ describe("SpotifyAuthRepository", () => {
     });
 
     it("should return accessToken when no refresh", async () => {
-        let spy = jest.spyOn(spotifyApi, 'getAccessTokenRequest');
-        
+        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
+            return new Promise((resolve ,reject )=> {
+                resolve({
+                    data: {
+                        "access_token":"myAccessToken"
+                    },
+                    headers: [],
+                    config: {},
+                    status: 200,
+                    statusText: ""
+                })
+            });
+        })
+
+
         let accessToken: string = await spotifyAuthRepository.getAccessToken(false);
         
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spotifyApi.getAccessTokenRequest).toHaveBeenCalledTimes(1);
         expect(accessToken).toBe("myAccessToken");
     });
 
     it("given previous accessToken should return same accessToken when no refresh", async () => {
-        let spy = jest.spyOn(spotifyApi, 'getAccessTokenRequest');
+        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
+            return new Promise((resolve ,reject )=> {
+                resolve({
+                    data: {
+                        "access_token":"myAccessToken"
+                    },
+                    headers: [],
+                    config: {},
+                    status: 200,
+                    statusText: ""
+                })
+            });
+        })
+
 
         let oldAccessToken: string = await spotifyAuthRepository.getAccessToken(false);
         let newAccessToken: string = await spotifyAuthRepository.getAccessToken(false);    
 
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spotifyApi.getAccessTokenRequest).toHaveBeenCalledTimes(1);
         expect(newAccessToken).toBe(oldAccessToken);
     });
 
     it("given previous accessToken should return new accessToken when refresh", async () => {
-        let spy = jest.spyOn(spotifyApi, 'getAccessTokenRequest');
+        let accessToken = "myAccessToken";
+        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
+            return new Promise((resolve ,reject )=> {
+                resolve({
+                    data: {
+                        "access_token":accessToken
+                    },
+                    headers: [],
+                    config: {},
+                    status: 200,
+                    statusText: ""
+                })
+            });
+        })
+        let oldAccessToken = await spotifyAuthRepository.getAccessToken(false);
 
-        await spotifyAuthRepository.getAccessToken(false);
-        //TODO: Aqui necesito poder cambiar el mock para retornar otro accessToken
-        await spotifyAuthRepository.getAccessToken(true);    
+        accessToken = "myNewAccessToken";
         
-        expect(spy).toHaveBeenCalledTimes(2);    
+        let newAccessToken = await spotifyAuthRepository.getAccessToken(true);    
+        
+        expect(spotifyApi.getAccessTokenRequest).toHaveBeenCalledTimes(2);    
+        expect(oldAccessToken).toBe("myAccessToken");
+        expect(newAccessToken).toBe("myNewAccessToken")
     });
 });
