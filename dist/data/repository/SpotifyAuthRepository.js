@@ -9,24 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class SpotifyAuthRepository {
-    constructor(spotifyApi) {
-        this.spotifyApi = spotifyApi;
+    constructor(api) {
+        this.spotifyApi = api;
     }
     getAccessToken(needRefresh) {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                if (this.accessToken == null || needRefresh) {
-                    var request = yield this.spotifyApi.getAccessTokenRequest();
-                    if (request.status >= 200 && request.status < 400) {
-                        this.accessToken = request.data["access_token"];
-                    }
-                    else {
-                        reject();
-                        return;
-                    }
+            if (this.accessToken == null || needRefresh) {
+                console.log(this.spotifyApi.getAccessTokenRequest);
+                let response = yield this.spotifyApi.getAccessTokenRequest();
+                if (response.status >= 200 && response.status < 400) {
+                    this.accessToken = response.data["access_token"];
                 }
-                resolve(this.accessToken);
-            }));
+            }
+            return this.accessToken;
         });
     }
 }

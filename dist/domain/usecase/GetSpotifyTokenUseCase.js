@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class GetSpotifyTokenUseCase {
-    constructor(authRepository) {
-        this.authRepository = authRepository;
+    constructor(repository) {
+        this.authRepository = repository;
     }
     execute(params) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -18,5 +18,5 @@ class GetSpotifyTokenUseCase {
         });
     }
 }
-exports.GetSpotifyTokenUseCase = GetSpotifyTokenUseCase;
+exports.default = GetSpotifyTokenUseCase;
 //# sourceMappingURL=GetSpotifyTokenUseCase.js.map
