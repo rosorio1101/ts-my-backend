@@ -10,6 +10,7 @@ import Secrets from "../../domain/model/Secrets";
 import { SpotifyApi } from "../../data/api/SpotifyApi";
 import AlbumStorage from "../../data/storage/AlbumStorage";
 import MongooseAlbumStorage from "../../data/storage/MongooseAlbumStorage";
+import { AxiosSpotifyApi } from "../../data/api/AxiosSpotifyApi";
 
 
 const secrets: Secrets = {
@@ -33,7 +34,7 @@ class App {
 
     constructor() {
         this.albumStorage = new MongooseAlbumStorage();
-        this.spotifyApi = new SpotifyApi(secrets);
+        this.spotifyApi = new AxiosSpotifyApi(secrets);
         this.albumRepository = new SpotifyAlbumRepository(this.spotifyApi, this.albumStorage); 
         this.searchAlbumByNameUseCase = new SearchAlbumByNameUseCase(this.albumRepository);
         this.albumController = new AlbumController(this.searchAlbumByNameUseCase);

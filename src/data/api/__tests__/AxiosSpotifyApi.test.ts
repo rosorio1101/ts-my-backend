@@ -1,7 +1,7 @@
 
 import * as moxios from 'moxios';
-import { SpotifyApi } from '../SpotifyApi';
 import Secrets from '../../../domain/model/Secrets';
+import { AxiosSpotifyApi } from '../AxiosSpotifyApi';
 
 const authenticationApiUrl = "https://accounts.spotify.com/api/token";
 
@@ -15,11 +15,11 @@ const secrets: Secrets = {
 }
 
 describe('SpotifyApi', () => {
-    let api: SpotifyApi;
+    let api: AxiosSpotifyApi;
 
     beforeEach(() => {    
         moxios.install()
-        api = new SpotifyApi(secrets);
+        api = new AxiosSpotifyApi(secrets);
     });
 
     afterEach(() => {
