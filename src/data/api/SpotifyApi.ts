@@ -1,12 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import { stringify } from 'querystring'
-
-interface Secrets {
-    clientId: string,
-    clientSecret: string, 
-    authenticationApiUrl: string,
-    spotifyApiUrl: string,
-}
+import Secrets from '../../domain/model/Secrets';
 
 export class SpotifyApi {
 
@@ -44,11 +38,8 @@ export class SpotifyApi {
     protected searchData = (query: Map<string, string>, authorization: string) : Promise<AxiosResponse> => {
         var url = this.secrets.spotifyApiUrl + "/search";
 
-        if (query != null) {
-            url += "?";
-            query.forEach((key, value)=> {
-                url += "&"+key+"="+value;
-            });
+        if (query) {
+            url += `?${stringify(query)}`;
         }
         
         return axios.get(url, {

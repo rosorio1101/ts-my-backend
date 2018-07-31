@@ -17,10 +17,10 @@ export class Routes {
     //TODO: sacar todos esos news...
     constructor() {
         this.spotifyApi = new SpotifyApi({
-            clientId : "",
-            clientSecret: "",
-            authenticationApiUrl: "",
-            spotifyApiUrl: ""
+            clientId : "5de5cc1dea9a49248447e9c1fc8c883e",
+            clientSecret: "f96497e6b670460a8b68279f9d9a1375",
+            authenticationApiUrl: "https://accounts.spotify.com/api/token",
+            spotifyApiUrl: "https://api.spotify.com/v1"
         });
         this.authRepository = new SpotifyAuthRepository(this.spotifyApi)
         this.useCase = new GetSpotifyTokenUseCase(this.authRepository);
