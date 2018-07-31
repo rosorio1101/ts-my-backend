@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from 'axios'
 import { stringify } from 'querystring'
 import Secrets from '../../domain/model/Secrets';
+import Album from '../../domain/model/Album';
+import AlbumsMapper from '../mapper/AlbumsMapper';
 
 
 interface IAccessToken {
@@ -20,9 +22,11 @@ export class SpotifyApi {
 
     private secrets: Secrets;
     private accessToken: IAccessToken;
+    private mapper: AlbumsMapper;
 
     constructor(secrets: Secrets) {
         this.secrets = secrets;
+        this.mapper = new AlbumsMapper;
     }
 
 
@@ -53,13 +57,15 @@ export class SpotifyApi {
         );
     }
 
-    public getAlbums = (album: string): Promise<AxiosResponse> =>  {
+    public getAlbums = async (album: string): Promise<Array<Album>> =>  {
         
         const map = new Map<string, string>();
         map["q"] = album;
         map["type"]= "album";
 
-        return this.searchData(map);
+        let searchData = await this.searchData(map);
+
+        return this.mapper.mapAll(searchData.data["albums"]["items"]);
     }
 
     protected searchData = async (query: Map<string, string>) : Promise<AxiosResponse> => {

@@ -50,10 +50,9 @@ describe('SpotifyApi', () => {
             response: responseSingleAlbum
         })
 
-        let response = await api.getAlbums('currents')
-        let items = response.data["albums"]["items"]
+        let albums = await api.getAlbums('currents');
         
-        expect(items.length).toBe(1);
+        expect(albums.length).toBe(1);
     });
 });
 
