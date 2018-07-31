@@ -1,3 +1,5 @@
+import Album from "../model/Album";
+
 export interface AlbumRepository {
-    findAllByName()
+    findAllByName(): Promise<Array<Album>>
 }

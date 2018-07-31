@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
-import Secrets from '../../domain/model/Secrets';
 import { stringify } from 'querystring'
+import Secrets from '../../domain/model/Secrets';
 
 export class SpotifyApi {
 
