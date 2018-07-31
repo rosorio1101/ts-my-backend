@@ -2,7 +2,7 @@ jest.mock('../../api/SpotifyApi')
 
 import { SpotifyAuthRepository } from "../SpotifyAuthRepository";
 import { SpotifyApi } from "../../api/SpotifyApi";
-import { AxiosResponse } from "../../../../node_modules/axios";
+import { AxiosResponse } from "axios";
 import { resolve } from "path";
 
 describe("SpotifyAuthRepository", () => {
@@ -22,18 +22,16 @@ describe("SpotifyAuthRepository", () => {
     });
 
     it("should return accessToken when no refresh", async () => {
-        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
-            return new Promise((resolve ,reject )=> {
-                resolve({
-                    data: {
-                        "access_token":"myAccessToken"
-                    },
-                    headers: [],
-                    config: {},
-                    status: 200,
-                    statusText: ""
-                })
-            });
+        spotifyApi.getAccessTokenRequest = jest.fn( async (): Promise<AxiosResponse> => {
+            return {
+                data: {
+                    "access_token":"myAccessToken"
+                },
+                headers: [],
+                config: {},
+                status: 200,
+                statusText: ""
+            }
         })
 
 
@@ -44,18 +42,16 @@ describe("SpotifyAuthRepository", () => {
     });
 
     it("given previous accessToken should return same accessToken when no refresh", async () => {
-        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
-            return new Promise((resolve ,reject )=> {
-                resolve({
-                    data: {
-                        "access_token":"myAccessToken"
-                    },
-                    headers: [],
-                    config: {},
-                    status: 200,
-                    statusText: ""
-                })
-            });
+        spotifyApi.getAccessTokenRequest = jest.fn( async (): Promise<AxiosResponse> => {
+            return {
+                data: {
+                    "access_token":"myAccessToken"
+                },
+                headers: [],
+                config: {},
+                status: 200,
+                statusText: ""
+            }
         })
 
 
@@ -68,23 +64,21 @@ describe("SpotifyAuthRepository", () => {
 
     it("given previous accessToken should return new accessToken when refresh", async () => {
         let accessToken = "myAccessToken";
-        spotifyApi.getAccessTokenRequest = jest.fn( (): Promise<AxiosResponse> => {
-            return new Promise((resolve ,reject )=> {
-                resolve({
-                    data: {
-                        "access_token":accessToken
-                    },
-                    headers: [],
-                    config: {},
-                    status: 200,
-                    statusText: ""
-                })
-            });
+        spotifyApi.getAccessTokenRequest = jest.fn(async  (): Promise<AxiosResponse> => {
+            return {
+                data: {
+                    "access_token":accessToken
+                },
+                headers: [],
+                config: {},
+                status: 200,
+                statusText: ""
+            };
         })
         let oldAccessToken = await spotifyAuthRepository.getAccessToken(false);
 
         accessToken = "myNewAccessToken";
-        
+
         let newAccessToken = await spotifyAuthRepository.getAccessToken(true);    
         
         expect(spotifyApi.getAccessTokenRequest).toHaveBeenCalledTimes(2);    

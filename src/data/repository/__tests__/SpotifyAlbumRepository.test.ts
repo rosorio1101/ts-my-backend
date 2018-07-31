@@ -1,61 +1,47 @@
+jest.mock('../../api/SpotifyApi')
 
-import * as moxios from 'moxios';
-import { SpotifyApi } from '../SpotifyApi';
-import Secrets from '../../../domain/model/Secrets';
-
-const authenticationApiUrl = "https://accounts.spotify.com/api/token";
-
-const spotifyApiUrl = "https://api.spotify.com/v1";
+import SpotifyAlbumRepository from "../SpotifyAlbumRepository";
+import Album from "../../../domain/model/Album";
+import { SpotifyApi } from "../../api/SpotifyApi";
+import { AxiosResponse } from "../../../../node_modules/axios";
+import Secrets from "../../../domain/model/Secrets";
 
 const secrets: Secrets = {
-    clientId: "myClientId",
-    clientSecret: "myClientSecret",
-    authenticationApiUrl: authenticationApiUrl,
-    spotifyApiUrl: spotifyApiUrl,
+    clientId: "",
+    clientSecret: "",
+    authenticationApiUrl: "",
+    spotifyApiUrl: ""
 }
 
-describe('SpotifyApi', () => {
-    let api: SpotifyApi;
+describe('SpotifyAlbumRepository', () => {
+    let spotifyApi: SpotifyApi;
+    let albumRepository: SpotifyAlbumRepository;
 
-    beforeEach(() => {    
-        moxios.install()
-        api = new SpotifyApi(secrets);
-    });
+    beforeEach(() => {
+        spotifyApi = new SpotifyApi(secrets);
+        albumRepository = new SpotifyAlbumRepository(spotifyApi);
+    })
 
-    afterEach(() => {
-        moxios.uninstall();
-    });
+    it('should get album list by name', async () => {
+        let albumName = "Currents";
+        spotifyApi.getAlbums = jest.fn(async (albumName: string, authorization: string): Promise<AxiosResponse> => {
+            return {
+                data: responseSingleAlbum,
+                headers: [],
+                config: {},
+                status: 200,
+                statusText: ""
+            };
+        });
 
-    it('getAccessTokenRequest -> should get accessToken from Spotify ', async () => {
-        moxios.stubRequest(authenticationApiUrl, {
-            status : 200, 
-            responseText : '{\"access_token\":\"myAccessToken\"}'
-        })
+        let albumArray: Array<Album> = await albumRepository.findAllByName(albumName);
 
-        let response = await api.getAccessTokenRequest();
-        let accessToken = response.data["access_token"];
+        expect(spotifyApi.getAlbums).toBeCalled();
+        expect(albumArray.length).toBe(1);
+    })
+    
+})
 
-        expect(accessToken).toBe("myAccessToken")
-        
-    });
-
-    it('getAlbums -> should return albums data from Spotify', async () => {
-        moxios.stubRequest(authenticationApiUrl, {
-            status : 200, 
-            responseText : '{\"access_token\":\"myAccessToken\"}'
-        })
-
-        moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album`, {
-            status: 200, 
-            response: responseSingleAlbum
-        })
-
-        let response = await api.getAlbums('currents')
-        let items = response.data["albums"]["items"]
-        
-        expect(items.length).toBe(1);
-    });
-});
 
 
 const responseSingleAlbum = {
