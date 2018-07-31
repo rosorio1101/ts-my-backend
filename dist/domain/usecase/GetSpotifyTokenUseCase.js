@@ -14,7 +14,7 @@ class GetSpotifyTokenUseCase {
     }
     execute(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.authRepository.getAccessToken(params.needRefresh);
+            return this.authRepository.getAccessToken(params.needRefresh);
         });
     }
 }

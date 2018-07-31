@@ -14,12 +14,14 @@ class SpotifyAuthRepository {
     }
     getAccessToken(needRefresh) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(`needRefresh: ${needRefresh}`);
             if (this.accessToken == null || needRefresh) {
-                console.log(this.spotifyApi.getAccessTokenRequest);
                 let response = yield this.spotifyApi.getAccessTokenRequest();
+                console.log(`response: ${response}`);
                 if (response.status >= 200 && response.status < 400) {
                     this.accessToken = response.data["access_token"];
                 }
+                console.log(`newAccessToken: ${this.accessToken}`);
             }
             return this.accessToken;
         });
