@@ -12,8 +12,6 @@ import AlbumStorage from "../../data/storage/AlbumStorage";
 import MongooseAlbumStorage from "../../data/storage/MongooseAlbumStorage";
 import { AxiosSpotifyApi } from "../../data/api/AxiosSpotifyApi";
 
-const clientId = process.env.SPOTIFY_CLIENT_ID
-
 const secrets: Secrets = {
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
