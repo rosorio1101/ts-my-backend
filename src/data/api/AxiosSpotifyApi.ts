@@ -66,8 +66,9 @@ export class AxiosSpotifyApi implements SpotifyApi {
     }
 
     protected searchData = async (query: Map<string, string>) : Promise<AxiosResponse> => {
-
-        if (!this.accessToken) {
+        console.log('searchData');
+        if (!this.accessToken) {        
+            console.log('get new access token');
             this.accessToken = await this.getAccessToken();
         }
 
@@ -84,6 +85,7 @@ export class AxiosSpotifyApi implements SpotifyApi {
                 }
             });
             if (response.status == 401) {
+                console.log('unauthorized, request again with new token');
                 this.accessToken = null;
                 return this.searchData(query);     
             } 
