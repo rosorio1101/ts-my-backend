@@ -39,6 +39,7 @@ export class AxiosSpotifyApi implements SpotifyApi {
         if (query) {
             url += `?${stringify(query)}`;
         }
+      
         let response = await axios.get(url, {
             headers: {
                 "Authorization": `Bearer ${accessToken.access_token}`
