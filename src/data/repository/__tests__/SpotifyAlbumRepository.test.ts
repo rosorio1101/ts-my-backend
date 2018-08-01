@@ -1,20 +1,9 @@
-jest.mock('../../api/SpotifyApi')
-
 import SpotifyAlbumRepository from "../SpotifyAlbumRepository";
 import Album from "../../../domain/model/Album";
 import { SpotifyApi } from "../../api/SpotifyApi";
-import { AxiosResponse } from "../../../../node_modules/axios";
-import Secrets from "../../../domain/model/Secrets";
 import AlbumStorage from "../../storage/AlbumStorage";
 import { MockAlbumStorage } from "../../storage/__mocks__/AlbumStorage";
-import { AxiosSpotifyApi } from "../../api/AxiosSpotifyApi";
-
-const secrets: Secrets = {
-    clientId: "",
-    clientSecret: "",
-    authenticationApiUrl: "",
-    spotifyApiUrl: ""
-}
+import { MockSpotifyApi } from "../../api/__mocks__/SpotifyApi";
 
 describe('SpotifyAlbumRepository', () => {
     let spotifyApi: SpotifyApi;
@@ -22,7 +11,7 @@ describe('SpotifyAlbumRepository', () => {
     let albumRepository: SpotifyAlbumRepository;
 
     beforeEach(() => {
-        spotifyApi = new AxiosSpotifyApi(secrets);
+        spotifyApi = new MockSpotifyApi();
         albumStorage = new MockAlbumStorage();
         albumRepository = new SpotifyAlbumRepository(spotifyApi, albumStorage);
     })

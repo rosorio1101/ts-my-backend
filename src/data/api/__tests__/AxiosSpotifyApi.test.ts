@@ -1,49 +1,32 @@
+jest.mock('../Authenticator')
+
 import * as moxios from 'moxios';
-import Secrets from '../../../domain/model/Secrets';
-import { AxiosSpotifyApi } from '../AxiosSpotifyApi';
-
-const authenticationApiUrl = "https://accounts.spotify.com/api/token";
-
-const spotifyApiUrl = "https://api.spotify.com/v1";
-
-const secrets: Secrets = {
-    clientId: "myClientId",
-    clientSecret: "myClientSecret",
-    authenticationApiUrl: authenticationApiUrl,
-    spotifyApiUrl: spotifyApiUrl,
-}
+import { AxiosSpotifyApi, spotifyApiUrl } from '../AxiosSpotifyApi';
+import { Authenticator } from '../Authenticator';
+import { MockAuthenticator } from '../__mocks__/Authenticator';
+import { AccessToken } from '../AccessToken';
 
 describe('SpotifyApi', () => {
     let api: AxiosSpotifyApi;
+    let authenticator: Authenticator;
 
     beforeEach(() => {    
         moxios.install()
-        api = new AxiosSpotifyApi(secrets);
+        authenticator = new MockAuthenticator();
+        api = new AxiosSpotifyApi(authenticator);
     });
 
     afterEach(() => {
         moxios.uninstall();
     });
 
-    it('getAccessTokenRequest -> should get accessToken from Spotify ', async () => {
-        moxios.stubRequest(authenticationApiUrl, {
-            status : 200, 
-            responseText : '{\"access_token\":\"myAccessToken\"}'
-        })
-
-        let response = await api.getAccessTokenRequest();
-        let accessToken = response.data["access_token"];
-
-        expect(accessToken).toBe("myAccessToken")
-        
-    });
-
     it('getAlbums -> should return albums data from Spotify', async () => {
-        let spy = jest.spyOn(api, 'getAccessTokenRequest');
-
-        moxios.stubRequest(authenticationApiUrl, {
-            status : 200, 
-            responseText : '{\"access_token\":\"myAccessToken\"}'
+        authenticator.authenticate = jest.fn(async (): Promise<AccessToken> => {
+            return {
+                access_token: "",
+                token_type: "",
+                expires_in: 0
+            };
         });
 
         moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album`, {
@@ -52,31 +35,9 @@ describe('SpotifyApi', () => {
         });
 
         let albums = await api.getAlbums('currents');
-        expect(spy).toHaveBeenCalledTimes(1);
+
         expect(albums.length).toBe(1);
-    });
-
-
-    it('getAlbums -> should reuse the same AccessToken', async () => {
-        let spy = jest.spyOn(api, 'getAccessTokenRequest');
-
-        moxios.stubRequest(authenticationApiUrl, {
-            status : 200, 
-            responseText : '{\"access_token\":\"myAccessToken\"}'
-        });
-
-        moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album`, {
-            status: 200, 
-            response: responseSingleAlbum
-        });
-
-        await api.getAlbums('currents');
-
-        let albums = await api.getAlbums('currents');
-
-        expect(spy).toHaveBeenCalledTimes(1);
-        expect(albums.length).toBe(1);
-    });    
+    });   
 });
 
 

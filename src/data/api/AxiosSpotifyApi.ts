@@ -1,57 +1,22 @@
 
 import axios, { AxiosResponse } from 'axios'
 import { stringify } from 'querystring'
-import Secrets from '../../domain/model/Secrets';
 import Album from '../../domain/model/Album';
 import AlbumsMapper from '../mapper/AlbumsMapper';
-import { SpotifyApi, IAccessToken } from './SpotifyApi';
+import { SpotifyApi } from './SpotifyApi';
+import { Authenticator } from './Authenticator';
+import { AccessToken } from './AccessToken';
 
-class AccessToken implements IAccessToken {
-    public token: string;
-
-    public constructor(token: string) {
-        this.token = token;
-    }
-
-}
+export const spotifyApiUrl = "https://api.spotify.com/v1";
 
 export class AxiosSpotifyApi implements SpotifyApi {
-
-    private secrets: Secrets;
-    private accessToken: IAccessToken;
+    
+    private authenticator: Authenticator;
     private mapper: AlbumsMapper;
 
-    constructor(secrets: Secrets) {
-        this.secrets = secrets;
-        this.mapper = new AlbumsMapper;
-    }
-
-
-    private async getAccessToken(): Promise<IAccessToken> {
-
-        if(!this.accessToken) {
-            let response = await this.getAccessTokenRequest();
-            this.accessToken = new AccessToken(response.data["access_token"]);
-        }
-
-        return this.accessToken;
-    }
-
-    public getAccessTokenRequest = () : Promise<AxiosResponse> => {
-        const encodedSecrets = Buffer.from(`${this.secrets.clientId}:${this.secrets.clientSecret}`)
-                                    .toString('base64');
-
-        const authorization = `Basic ${encodedSecrets}`;       
-
-        return axios.post(this.secrets.authenticationApiUrl, 
-            stringify({"grant_type":"client_credentials"}), 
-            {              
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    "Authorization": authorization
-                }
-            }
-        );
+    constructor(authenticator: Authenticator) {
+        this.authenticator = authenticator;
+        this.mapper = new AlbumsMapper();
     }
 
     public getAlbums = async (album: string): Promise<Array<Album>> =>  {
@@ -66,36 +31,21 @@ export class AxiosSpotifyApi implements SpotifyApi {
     }
 
     protected searchData = async (query: Map<string, string>) : Promise<AxiosResponse> => {
-        console.log('searchData');
-        if (!this.accessToken) {        
-            console.log('get new access token');
-            this.accessToken = await this.getAccessToken();
-        }
-
-        let url = `${this.secrets.spotifyApiUrl}/search`;
+    
+        let accessToken: AccessToken = await this.authenticator.authenticate();
+        
+        let url = `${spotifyApiUrl}/search`;
 
         if (query) {
             url += `?${stringify(query)}`;
         }
-        
-        try {
-            let response = await axios.get(url, {
-                headers: {
-                    "Authorization": `Bearer ${this.accessToken.token}`
-                }
-            });
-            if (response.status == 401) {
-                console.log('unauthorized, request again with new token');
-                this.accessToken = null;
-                return this.searchData(query);     
-            } 
-
-            if (response.status >= 200 && response.status < 400) {
-                return response;
+      
+        let response = await axios.get(url, {
+            headers: {
+                "Authorization": `Bearer ${accessToken.access_token}`
             }
-        } catch(e) {
-            this.accessToken = null;
-            return this.searchData(query);
-        }
+        });
+
+        return response;
     }
 }
