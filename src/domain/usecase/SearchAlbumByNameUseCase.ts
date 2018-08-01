@@ -2,7 +2,12 @@ import Album from "../model/Album";
 import { UseCase } from "./UseCase";
 import { AlbumRepository } from "../repository/AlbumRepository";
 
-export default class SearchAlbumByNameUseCase implements UseCase<Promise<Array<Album>>, string> {
+interface Params {
+    albumName: string,
+    page: number
+}
+
+export default class SearchAlbumByNameUseCase implements UseCase<Promise<Array<Album>>, Params> {
 
     private albumRepository: AlbumRepository;
 
@@ -10,7 +15,7 @@ export default class SearchAlbumByNameUseCase implements UseCase<Promise<Array<A
         this.albumRepository = albumRepository;
     }
 
-    public execute = async (name: string): Promise<Array<Album>> => {
-        return this.albumRepository.findAllByName(name);
+    public execute = async (params: Params): Promise<Array<Album>> => {
+        return this.albumRepository.findAllBy(params.albumName, params.page);
     }
 }
