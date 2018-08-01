@@ -1,7 +1,6 @@
-
 import * as moxios from 'moxios';
-import { SpotifyApi } from '../SpotifyApi';
 import Secrets from '../../../domain/model/Secrets';
+import { AxiosSpotifyApi } from '../AxiosSpotifyApi';
 
 const authenticationApiUrl = "https://accounts.spotify.com/api/token";
 
@@ -15,11 +14,11 @@ const secrets: Secrets = {
 }
 
 describe('SpotifyApi', () => {
-    let api: SpotifyApi;
+    let api: AxiosSpotifyApi;
 
     beforeEach(() => {    
         moxios.install()
-        api = new SpotifyApi(secrets);
+        api = new AxiosSpotifyApi(secrets);
     });
 
     afterEach(() => {
@@ -40,20 +39,44 @@ describe('SpotifyApi', () => {
     });
 
     it('getAlbums -> should return albums data from Spotify', async () => {
+        let spy = jest.spyOn(api, 'getAccessTokenRequest');
+
         moxios.stubRequest(authenticationApiUrl, {
             status : 200, 
             responseText : '{\"access_token\":\"myAccessToken\"}'
-        })
+        });
 
         moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album`, {
             status: 200, 
             response: responseSingleAlbum
-        })
+        });
 
         let albums = await api.getAlbums('currents');
-        
+        expect(spy).toHaveBeenCalledTimes(1);
         expect(albums.length).toBe(1);
     });
+
+
+    it('getAlbums -> should reuse the same AccessToken', async () => {
+        let spy = jest.spyOn(api, 'getAccessTokenRequest');
+
+        moxios.stubRequest(authenticationApiUrl, {
+            status : 200, 
+            responseText : '{\"access_token\":\"myAccessToken\"}'
+        });
+
+        moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album`, {
+            status: 200, 
+            response: responseSingleAlbum
+        });
+
+        await api.getAlbums('currents');
+
+        let albums = await api.getAlbums('currents');
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(albums.length).toBe(1);
+    });    
 });
 
 

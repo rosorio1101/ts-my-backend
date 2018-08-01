@@ -7,6 +7,7 @@ import { AxiosResponse } from "../../../../node_modules/axios";
 import Secrets from "../../../domain/model/Secrets";
 import AlbumStorage from "../../storage/AlbumStorage";
 import { MockAlbumStorage } from "../../storage/__mocks__/AlbumStorage";
+import { AxiosSpotifyApi } from "../../api/AxiosSpotifyApi";
 
 const secrets: Secrets = {
     clientId: "",
@@ -21,7 +22,7 @@ describe('SpotifyAlbumRepository', () => {
     let albumRepository: SpotifyAlbumRepository;
 
     beforeEach(() => {
-        spotifyApi = new SpotifyApi(secrets);
+        spotifyApi = new AxiosSpotifyApi(secrets);
         albumStorage = new MockAlbumStorage();
         albumRepository = new SpotifyAlbumRepository(spotifyApi, albumStorage);
     })
