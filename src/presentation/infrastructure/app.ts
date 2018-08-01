@@ -11,12 +11,12 @@ import { SpotifyApi } from "../../data/api/SpotifyApi";
 import AlbumStorage from "../../data/storage/AlbumStorage";
 import MongooseAlbumStorage from "../../data/storage/MongooseAlbumStorage";
 import { AxiosSpotifyApi } from "../../data/api/AxiosSpotifyApi";
+import { Authenticator } from "../../data/api/Authenticator";
+import { SpotifyClientFlowAuthenticator } from "../../data/api/SpotifyClientFlowAuthenticator";
 
 const secrets: Secrets = {
     clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    authenticationApiUrl: "https://accounts.spotify.com/api/token",
-    spotifyApiUrl: "https://api.spotify.com/v1"
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 }
 
 const mongoUrl = "mongodb://localhost/mySpotifyDataBase";
@@ -24,6 +24,7 @@ const mongoUrl = "mongodb://localhost/mySpotifyDataBase";
 class App {
     public app: express.Application;
 
+    private authenticator: Authenticator;
     private albumController: AlbumController;
     private searchAlbumByNameUseCase: SearchAlbumByNameUseCase;
     private albumRepository: AlbumRepository;
@@ -32,8 +33,9 @@ class App {
     public routes: Routes;
 
     constructor() {
+        this.authenticator = new SpotifyClientFlowAuthenticator(secrets);
         this.albumStorage = new MongooseAlbumStorage();
-        this.spotifyApi = new AxiosSpotifyApi(secrets);
+        this.spotifyApi = new AxiosSpotifyApi(this.authenticator);
         this.albumRepository = new SpotifyAlbumRepository(this.spotifyApi, this.albumStorage); 
         this.searchAlbumByNameUseCase = new SearchAlbumByNameUseCase(this.albumRepository);
         this.albumController = new AlbumController(this.searchAlbumByNameUseCase);

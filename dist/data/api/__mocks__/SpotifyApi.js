@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class SpotifyApi {
+class MockSpotifyApi {
     constructor() {
-        this.getAccessTokenRequest = jest.fn(() => { });
         this.getAlbums = jest.fn((album, authorization) => { });
     }
 }
-exports.SpotifyApi = SpotifyApi;
+exports.MockSpotifyApi = MockSpotifyApi;
 //# sourceMappingURL=SpotifyApi.js.map
