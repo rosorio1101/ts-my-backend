@@ -7,4 +7,10 @@ export class MockAlbumRepository implements AlbumRepository {
         albums.push(new Album("Currents","","",""));
         return albums;        
     });
+
+    public findAllBy = jest.fn( async (name: string, page: number): Promise<Array<Album>> => { 
+        let albums = new Array<Album>();
+        albums.push(new Album("Currents","","",""));
+        return albums;        
+    });
 }

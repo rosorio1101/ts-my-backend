@@ -34,10 +34,34 @@ describe('SpotifyApi', () => {
             response: responseSingleAlbum
         });
 
-        let albums = await api.getAlbums('currents');
+        let albums = await api.getAlbums({
+            name: 'currents'        
+        });
 
         expect(albums.length).toBe(1);
-    });   
+    }); 
+    
+    it('getAlbums -> should return albums data from Spotify where page 2', async () => {
+        authenticator.authenticate = jest.fn(async (): Promise<AccessToken> => {
+            return {
+                access_token: "",
+                token_type: "",
+                expires_in: 0
+            };
+        });
+
+        moxios.stubRequest(`${spotifyApiUrl}/search?q=currents&type=album&limit=20&offset=21`, {
+            status: 200, 
+            response: responseSingleAlbum
+        });
+
+        let albums = await api.getAlbums({
+            name: 'currents',
+            page: 2        
+        });
+
+        expect(albums.length).toBe(1);
+    }); 
 });
 
 

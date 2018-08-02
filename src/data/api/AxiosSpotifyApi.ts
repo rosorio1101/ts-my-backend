@@ -3,11 +3,13 @@ import axios, { AxiosResponse } from 'axios'
 import { stringify } from 'querystring'
 import Album from '../../domain/model/Album';
 import AlbumsMapper from '../mapper/AlbumsMapper';
-import { SpotifyApi } from './SpotifyApi';
+import { SpotifyApi, Query } from './SpotifyApi';
 import { Authenticator } from './Authenticator';
 import { AccessToken } from './AccessToken';
 
 export const spotifyApiUrl = "https://api.spotify.com/v1";
+
+const itemByPage = 20;
 
 export class AxiosSpotifyApi implements SpotifyApi {
     
@@ -19,11 +21,16 @@ export class AxiosSpotifyApi implements SpotifyApi {
         this.mapper = new AlbumsMapper();
     }
 
-    public getAlbums = async (album: string): Promise<Array<Album>> =>  {
+    public getAlbums = async (query: Query): Promise<Array<Album>> =>  {
         
         const map = new Map<string, string>();
-        map["q"] = album;
+        map["q"] = query.name;
         map["type"]= "album";
+
+        if (query.page) {
+            map["limit"] = itemByPage;
+            map["offset"] = (itemByPage * (query.page-1))+ 1;  
+        } 
 
         let searchData = await this.searchData(map);
 
