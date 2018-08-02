@@ -35,15 +35,10 @@ export class SpotifyClientFlowAuthenticator implements Authenticator {
 
     private async getAccessToken(): Promise<AccessToken> {    
         let response = await this.getAccessTokenResponse();
-        
-        return {
-            access_token: response.data["access_token"],
-            token_type: response.data["token_type"],
-            expires_in: response.data["expires_in"]
-        };
+        return response.data;
     }
 
-    private async getAccessTokenResponse(): Promise<AxiosResponse> {    
+    private async getAccessTokenResponse(): Promise<AxiosResponse<AccessToken>> {    
         const encodedSecrets = Buffer.from(`${this.secrets.clientId}:${this.secrets.clientSecret}`).toString('base64');
 
         const authorization = `Basic ${encodedSecrets}`;      

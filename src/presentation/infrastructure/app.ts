@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
+import * as cors from 'cors';
 import { Routes } from "../routes/Routes";
 import AlbumController from "../controller/AlbumController";
 import SearchAlbumByNameUseCase from "../../domain/usecase/SearchAlbumByNameUseCase";
@@ -19,7 +20,10 @@ const secrets: Secrets = {
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 }
 
-const mongoUrl = "mongodb://localhost/mySpotifyDataBase";
+const mongoUser = process.env.MY_BACKEND_MONGO_USER;
+const mongoPassword = process.env.MY_BACKEND_MONGO_PASSWORD;
+
+const mongoUrl = `mongodb+srv://${mongoUser}:${mongoPassword}@cluster0-94zih.mongodb.net/mySpotifyDataBase?retryWrites=true`;
 
 class App {
     public app: express.Application;
@@ -49,6 +53,7 @@ class App {
     public config(): void {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(cors());
     }
 
     private mongooseConfig(): void {

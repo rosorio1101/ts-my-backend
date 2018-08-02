@@ -15,8 +15,22 @@ export default class SpotifyAlbumRepository implements AlbumRepository {
     }
 
     public async findAllByName(name: string): Promise<Array<Album>> {    
-        let albums = await this.spotifyApi.getAlbums(name);
+        let albums = await this.spotifyApi.getAlbums({
+            name: name,
+            page: 0
+        });
         
+        this.storage.saveAll(albums);
+
+        return albums;
+    }
+
+    public async findAllBy(name: string, page: null): Promise<Array<Album>> {
+        let albums = await this.spotifyApi.getAlbums({
+            name: name,
+            page: page
+        });
+
         this.storage.saveAll(albums);
 
         return albums;
